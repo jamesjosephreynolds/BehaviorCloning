@@ -13,7 +13,7 @@ In the case of horizontal translation, a gain is applied to the magnitude of the
 
 The main way that my implementation is unique from those blogposts above, is that following the translations, during the cropping step, I remove the black space from the final image, by not including it in the cropped area.  As far as I see, both of the blogposts above leave this black space in the image as, essentially, noise.  A sample of my augmentation for a single image is shown here:
 
-![augmentation.png should go here, whoops!](https://github.com/jamesjosephreynolds/master/P3_results/augmentation.png)
+![augmentation.png should go here, whoops!](augmentation.png)
 
 My model architecture is based on that of Nvidia in their end-to-end paper.  The differences are as follows: I did the normalization outside of the CNN, and rather than using multiple pixel strides during convolution, I used max pooling layers after the convolution.  It’s not clear if authors used dropout, but as many references (blogposts above, Confluence posts, etc) cautioned about overfitting in this project, I included dropout after every layer.
 

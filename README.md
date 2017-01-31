@@ -21,7 +21,7 @@ The main way that my implementation is unique from those blogposts above, is tha
 
 ## CNN Model Architecture ##
 
-My model architecture is based on that of Nvidia in their end-to-end paper.  The differences are as follows: I did the normalization outside of the CNN, and rather than using multiple pixel strides during convolution, I used max pooling layers after the convolution.  It’s not clear if authors used dropout, but as many references (blogposts above, Confluence posts, etc) cautioned about overfitting in this project, I included dropout after every layer.
+My model architecture is based on that of Nvidia in their end-to-end paper.  The differences are as follows: I did the normalization outside of the CNN, and rather than using multiple pixel strides during convolution, I used max pooling layers after the convolution.  It’s not clear if authors used dropout, but as many references (blogposts above, Confluence posts, etc) cautioned about overfitting in this project, I included dropout after every layer. 
 
 For the last layer I chose ‘tanh’ for my activation layer, to ensure I could get results between -1 and +1.  For all other layers I chose ‘relu’.
 

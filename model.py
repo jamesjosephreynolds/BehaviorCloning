@@ -29,7 +29,7 @@ X_train_file, X_validation_file, y_train, y_validation = train_test_split(X_data
                                         test_size = 0.2, random_state=0)
 
 
-if 0: #debug switch visualize pre-processing
+if 1: #debug switch visualize pre-processing
 
     X_data_in = cf.get_img_from_file(X_train_file[0])
     y_data_in = y_train[0]
@@ -45,8 +45,6 @@ if 0: #debug switch visualize pre-processing
         axN.set_xlabel('steer = '+str(y_data))
         
     plt.savefig('augmentation.png',format = 'PNG')
-    plt.show()
-    
 
 '''Define data generator'''
 def data_generator(X_file, y, batch_size = 256, width = 200, height = 66):
@@ -62,7 +60,7 @@ def data_generator(X_file, y, batch_size = 256, width = 200, height = 66):
                 data_idx = 0
 
             keep_prob = 0
-            while keep_prob < 0.9:
+            while keep_prob < 0.75:
                 steer = y[data_idx]
                 img = cf.get_img_from_file(X_file[data_idx])
                 if steer < 0.1:
@@ -129,17 +127,21 @@ drive_model.add(Dropout(0.5))
 
 drive_model.add(Dense(1))
 
-if 0: # debug switch show model summary
-    drive_model.summary()
+''' Compile and reload the model'''
+drive_model.compile(optimizer='Adam', loss='mse', lr = 0.00002)
+drive_model.load_weights('model.h5', by_name=False)
 
 if 1: # debug switch train model
     '''Train the model'''
-    drive_model.compile(optimizer='Adam', loss='mse', lr = 0.0001)
-    #drive_model.load_weights('model.h5', by_name=False)
     drive_model.fit_generator(data_generator(X_train_file, y_train),
                               validation_data = data_generator(X_validation_file, y_validation),
                               nb_val_samples = 2048, samples_per_epoch = 32768,
-                              nb_epoch = 5, verbose = 1)
+                              nb_epoch = 3, verbose = 1)
+
+if 1: # debug switch show model summary
+    drive_model.summary()
+    my_weights = drive_model.get_weights()
+    print(my_weights[0][0])
 
 drive_model.save_weights('model.h5')
 model_json = drive_model.to_json()

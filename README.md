@@ -25,6 +25,56 @@ My model architecture is based on that of Nvidia in their end-to-end paper.  The
 
 For the last layer I chose ‘tanh’ for my activation layer, to ensure I could get results between -1 and +1.  For all other layers I chose ‘relu’.
 
+____________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+convolution2d_1 (Convolution2D)  (None, 62, 196, 24)   1824        convolution2d_input_1[0][0]      
+____________________________________________________________________________________________________
+maxpooling2d_1 (MaxPooling2D)    (None, 31, 98, 24)    0           convolution2d_1[0][0]            
+____________________________________________________________________________________________________
+dropout_1 (Dropout)              (None, 31, 98, 24)    0           maxpooling2d_1[0][0]             
+____________________________________________________________________________________________________
+convolution2d_2 (Convolution2D)  (None, 27, 94, 36)    21636       dropout_1[0][0]                  
+____________________________________________________________________________________________________
+maxpooling2d_2 (MaxPooling2D)    (None, 14, 47, 36)    0           convolution2d_2[0][0]            
+____________________________________________________________________________________________________
+dropout_2 (Dropout)              (None, 14, 47, 36)    0           maxpooling2d_2[0][0]             
+____________________________________________________________________________________________________
+convolution2d_3 (Convolution2D)  (None, 10, 43, 48)    43248       dropout_2[0][0]                  
+____________________________________________________________________________________________________
+maxpooling2d_3 (MaxPooling2D)    (None, 5, 22, 48)     0           convolution2d_3[0][0]            
+____________________________________________________________________________________________________
+dropout_3 (Dropout)              (None, 5, 22, 48)     0           maxpooling2d_3[0][0]             
+____________________________________________________________________________________________________
+convolution2d_4 (Convolution2D)  (None, 3, 20, 64)     27712       dropout_3[0][0]                  
+____________________________________________________________________________________________________
+dropout_4 (Dropout)              (None, 3, 20, 64)     0           convolution2d_4[0][0]            
+____________________________________________________________________________________________________
+convolution2d_5 (Convolution2D)  (None, 1, 18, 64)     36928       dropout_4[0][0]                  
+____________________________________________________________________________________________________
+dropout_5 (Dropout)              (None, 1, 18, 64)     0           convolution2d_5[0][0]            
+____________________________________________________________________________________________________
+flatten_1 (Flatten)              (None, 1152)          0           dropout_5[0][0]                  
+____________________________________________________________________________________________________
+dense_1 (Dense)                  (None, 100)           115300      flatten_1[0][0]                  
+____________________________________________________________________________________________________
+dropout_6 (Dropout)              (None, 100)           0           dense_1[0][0]                    
+____________________________________________________________________________________________________
+dense_2 (Dense)                  (None, 50)            5050        dropout_6[0][0]                  
+____________________________________________________________________________________________________
+dropout_7 (Dropout)              (None, 50)            0           dense_2[0][0]                    
+____________________________________________________________________________________________________
+dense_3 (Dense)                  (None, 10)            510         dropout_7[0][0]                  
+____________________________________________________________________________________________________
+dropout_8 (Dropout)              (None, 10)            0           dense_3[0][0]                    
+____________________________________________________________________________________________________
+dense_4 (Dense)                  (None, 1)             11          dropout_8[0][0]                  
+====================================================================================================
+Total params: 252,219
+Trainable params: 252,219
+Non-trainable params: 0
+____________________________________________________________________________________________________
+
 ## Training ##
 
 My original attempts at training the model, were unsuccessful, as the car seemed to drive almost perfectly straight all the time.  I suspect this is due the majority of the data having zero steering angle, and the model tending to overfit to this situation.  My first mitigation strategy for this was to shift most images with zero steering angle to the left or right, and give a nonzero command.  This is implemented via the custom functions horizontal_shift() and pre_process().  After training this model a couple of times with decreasing learning rate, I was able to get a model that cleared the first five or so turns on the track.  At the second sharp turn before a dirt patch, the car drove straight off the road again.  My next mitigation technique was to train again, but to drop 90% of the images where the steering angle is less than 0.1.

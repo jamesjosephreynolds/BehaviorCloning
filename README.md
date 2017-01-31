@@ -19,6 +19,8 @@ The main way that my implementation is unique from those blogposts above, is tha
 
 ![augmentation.png should go here, whoops!](augmentation.png)
 
+Early on my models were not able to navigate sharp corners with non-grassy backgrounds (water or dirt).  I realized that I had cropped off too much of the top of the image, and the model was having trouble distinguishing those areas from the road.  I updated my pre-processing to leave more of the horizon visible.
+
 ## CNN Model Architecture ##
 
 My model architecture is based on that of Nvidia in their end-to-end paper.  The differences are as follows: I did the normalization outside of the CNN, and rather than using multiple pixel strides during convolution, I used max pooling layers after the convolution.  It’s not clear if authors used dropout, but as many references (blogposts above, Confluence posts, etc) cautioned about overfitting in this project, I included dropout after every layer. 

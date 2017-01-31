@@ -6,9 +6,9 @@ I used the data provided by Udacity to train my model.  I initially tried to gen
 
 ## Pre-Processing ##
 
-For my image pre-processing, I leaned heavily on the separate blogposts by Vivek Yadav and Mojtaba Valipour (my Udacity mentor).  Without these resources I fear I would have floundered for many days before I was able to train my model for any semblance of control.
+For my image pre-processing, I leaned heavily on the separate blogposts by [Vivek Yadav](https://chatbotslife.com/using-augmentation-to-mimic-human-driving-496b569760a9#.5zfkeeph4) and [Mojtaba Valipour](https://medium.com/@ValipourMojtaba/my-approach-for-project-3-2545578a9319#.em46k7679) (my Udacity mentor).  Without these resources I fear I would have floundered for many days before I was able to train my model for any semblance of control.
 
-My utility function, pre_process(), uses two possible operating modes: ‘train’ or None.  This allows me to use the same pre-processing for both the training and validation generator, as well as in the driving script, drive.py.  For the latter, I set the mode = None.  In this case, the only function is to crop the image to 66x200 pixels, around the center pixel, and normalize the data.  For training, and for validation, there are several other steps, as follows:
+My utility function, pre_process(), uses two possible operating modes: ‘train’ or None.  This allows me to use the same pre-processing function call for both the training and validation generator, as well as in the driving script, drive.py.  For the latter, I set the mode = None.  In this case, the only function is to crop the hood and part of the sky out of the image, then resize the image to 66x200 pixels, around the center pixel, and normalize the data.  For training, and for validation, there are several other steps, as follows:
 1. The image is randomly translated vertically
 2. The image is randomly translated horizontally
 3. The image brightness is randomly skewed (in HSV colorspace)

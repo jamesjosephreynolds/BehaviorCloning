@@ -72,33 +72,13 @@ def visualize(img):
 
     return 1
 
-def crop_img(img, shiftV, shiftH, hood, sky, size = (66,200)):
+def crop_border(img, shiftV, shiftH, size = (66,200)):
     # crop the image around the remaining non-black area
     # after vertical and horizontal translation
     rows, cols, _ = img.shape
 
-    if shiftV < -sky:
-        y0 = 0
-    else:
-        y0 = sky + shiftV
-
-    if shiftV > hood:
-        y1 = rows
-    else:
-        y1 = rows - (hood - shiftV)
-
-    if shiftH < 0:
-        x0 = 0
-    else:
-        x0 = shiftH
-
-    if shiftH > 0:
-        x1 = cols
-    else:
-        x1 = cols + shiftH
-
-    # find the center pixel of the smaller image
-    center = (np.int((y1+y0)/2), np.int((x1+x0)/2))
+    # find the center pixel of the input image
+    center = (rows/2, cols/2)
 
     # find the corners of the smaller image
     y0 = np.int(center[0] - size[0]/2)
@@ -112,6 +92,18 @@ def crop_img(img, shiftV, shiftH, hood, sky, size = (66,200)):
     # redundant resize in case rounding generates +/- 1 pixel error
     img = resize(img, size[1], size[0])
     
+    return img
+
+def crop_hood_sky(img, hood, sky):
+    # crop the hood and the sky out of the image
+    rows, cols, _ = img.shape
+
+    y0 = sky
+    y1 = rows - hood
+
+    # grab the smaller image
+    img = img[y0:y1, 0:cols]
+  
     return img
 
 def vertical_shift(img,maxY = 30):
@@ -178,7 +170,9 @@ def get_data_arrays(array):
                 
     return X_array, y_array
 
-def pre_process(img, steer, gain, maxY = 30, maxX = 40, maxB = 1.25, hood = 15, sky = 50, size = (66, 200), mode = 'train'):
+def pre_process(img, steer, gain, maxY = 20, maxX = 40, maxB = 1.25, hood = 15, sky = 20, size = (66, 200), mode = 'train'):
+
+    img = crop_hood_sky(img, hood, sky)
     if mode is 'train':
         img, shiftV = vertical_shift(img, maxY)
         img, shiftH = horizontal_shift(img, maxX)
@@ -195,7 +189,7 @@ def pre_process(img, steer, gain, maxY = 30, maxX = 40, maxB = 1.25, hood = 15, 
         shiftB = 1
         steer = steer
 
-    img = crop_img(img,  shiftV, shiftH, hood, sky)
+    img = crop_border(img,  shiftV, shiftH)
     flip_prob = np.random.uniform(-1, 1, 1)
     if flip_prob > 0 and mode is 'train':
         img = cv2.flip(img, 1)

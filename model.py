@@ -44,7 +44,9 @@ if 0: #debug switch visualize pre-processing
         axN.imshow(X_data)
         axN.set_xlabel('steer = '+str(y_data))
         
+    plt.savefig('augmentation.png',format = 'PNG')
     plt.show()
+    
 
 '''Define data generator'''
 def data_generator(X_file, y, batch_size = 256, width = 200, height = 66):
@@ -133,10 +135,10 @@ if 0: # debug switch show model summary
 if 1: # debug switch train model
     '''Train the model'''
     drive_model.compile(optimizer='Adam', loss='mse', lr = 0.0001)
-    drive_model.load_weights('model.h5', by_name=False)
+    #drive_model.load_weights('model.h5', by_name=False)
     drive_model.fit_generator(data_generator(X_train_file, y_train),
                               validation_data = data_generator(X_validation_file, y_validation),
-                              nb_val_samples = 2048, samples_per_epoch = 16384,
+                              nb_val_samples = 2048, samples_per_epoch = 32768,
                               nb_epoch = 5, verbose = 1)
 
 drive_model.save_weights('model.h5')

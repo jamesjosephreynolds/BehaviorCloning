@@ -39,12 +39,14 @@ def telemetry(sid, data):
     speed = data["speed"]
     # The current image from the center camera of the car
     imgString = data["image"]
-    ''' My modifications start '''
     image = Image.open(BytesIO(base64.b64decode(imgString)))
+    
+    # My modifications start
     image = np.array(image)
     image, _, _, _, _ = cf.pre_process(image, 0, 0, mode = None)
     image = cf.norm_data(image)
-    ''' My modifications end '''
+    # My modifications end
+    
     image_array = np.asarray(image)
     transformed_image_array = image_array[None, :, :, :]
     # This model currently assumes that the features of the model are just the images. Feel free to change this.

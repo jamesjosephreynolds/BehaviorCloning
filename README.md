@@ -54,6 +54,9 @@ For the last layer I chose ‘tanh’ for my activation layer, to ensure I could
 
 Trainable params: 252,219
 
+![CNN_architecture.png should go here, whoops!](CNN_architecture.png)
+Graphical representation of the arcitecture.
+
 ## Training ##
 
 My original attempts at training the model, were unsuccessful, as the car seemed to drive almost perfectly straight all the time.  I suspect this is due the majority of the data having zero steering angle, and the model tending to overfit to this situation.  My first mitigation strategy for this was to shift most images with zero steering angle to the left or right, and give a nonzero command.  This is implemented via the custom functions horizontal_shift() and pre_process().  After training this model a couple of times with decreasing learning rate, I was able to get a model that cleared the first five or so turns on the track.  At the second sharp turn before a dirt patch, the car drove straight off the road again.  My next mitigation technique was to train again, but to drop 90% of the images where the steering angle is less than 0.1.

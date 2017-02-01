@@ -52,9 +52,7 @@ For the last layer I chose ‘tanh’ for my activation layer, to ensure I could
 |dense_4 (Dense)                |(None, 1)          |11     |dropout_8[0][0]                  
 -------------------------------------------
 
-Total params: 252,219
 Trainable params: 252,219
-Non-trainable params: 0
 
 ## Training ##
 

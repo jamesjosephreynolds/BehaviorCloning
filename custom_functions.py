@@ -144,29 +144,21 @@ def resize(img, width = 120, height = 120):
     return img
 
 def get_data_arrays(array):
-    # load images and steering angles into data arrays
-    N = len(array)
-    y_array = np.zeros((1, 1), dtype = np.float32)
-    X = ()
-
-
-    left_bias = 0.2
-    right_bias = -0.2
-    inner_idx = 0
+    # load image names and steering angles into data arrays
     
-    for outer_idx in range(N):
-        #for inner_idx in range(3):
-        x_file = get_img_file_from_list(array, inner_idx, outer_idx)
-            #if inner_idx is 0:
-        y = get_col_data_from_list(array, 3, outer_idx)
-            #elif inner_idx is 1:
-                #y = get_col_data_from_list(array, 3, outer_idx) + left_bias
-            #elif inner_idx is 2:
-                #y = get_col_data_from_list(array, 3, outer_idx) + right_bias
+    N = len(array)
+    
+    # initialize
+    y_array = np.zeros((1, 1), dtype = np.float32)
+    
+    for idx in range(N):
+
+        x_file = get_img_file_from_list(array, 0, idx)
+        y = get_col_data_from_list(array, 3, idx)
 
         y = np.array([y], dtype = np.float32)
             
-        if outer_idx is 0:# and inner_idx is 0:
+        if idx is 0:
             X_array = [x_file]
             y_array[0] = y
         else:
@@ -176,6 +168,9 @@ def get_data_arrays(array):
     return X_array, y_array
 
 def pre_process(img, steer, gain, maxY = 20, maxX = 40, maxB = 1.25, hood = 15, sky = 20, size = (66, 200), mode = 'train'):
+    # preprocess images
+    # in mode == 'train': crop hood and sky, shift vertical, shift horizontal, scale brightness, crop border, flip
+    # in mode != 'train': crop hood and sky, crop border
 
     img = crop_hood_sky(img, hood, sky)
     if mode is 'train':
@@ -198,6 +193,6 @@ def pre_process(img, steer, gain, maxY = 20, maxX = 40, maxB = 1.25, hood = 15, 
     flip_prob = np.random.uniform(-1, 1, 1)
     if flip_prob > 0 and mode is 'train':
         img = cv2.flip(img, 1)
-        steer = -steer
+        steer = -steer # flip steering angle while flipping image
     
     return img, steer, shiftV, shiftH, shiftB

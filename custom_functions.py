@@ -9,7 +9,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-
 def check_custom_functions_import():
     print("custom_functions.py loaded successfully")
 
@@ -24,9 +23,9 @@ def get_list_from_csv(file):
 
 def get_col_data_from_list(list_data, col_idx, row_idx):
     # get column data from list as array of real numbers
+    # this applies to the steering angle data in the csv
 
     col_np_array = np.zeros((1), dtype = np.float32)
-
     col_np_array = float(list_data[row_idx][col_idx])
 
     return col_np_array
@@ -34,6 +33,7 @@ def get_col_data_from_list(list_data, col_idx, row_idx):
 
 def get_img_file_from_list(list_data, col_idx, row_idx):
     # get image data from list as array of images
+    # this applies to the filenames of images in the csv
 
     img_list = list_data[row_idx][col_idx]
 
@@ -41,46 +41,33 @@ def get_img_file_from_list(list_data, col_idx, row_idx):
 
 def get_img_from_file(file):
     # take filename and path and load into a numpy array
+    # this will actually load the images data, not filename
+    
     img = cv2.imread(file, 1)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
     return img
     
-
-def get_prob(array, threshold):
-    # calculate the probability of points in an array smaller than a threshold
-
-    N = len(array)
-    sum = 0
-    print(N)
-
-    for point in array:
-        if abs(point) < threshold:
-            sum+=1
-
-    print("probability of zero is {:1.3f}".format(sum/N))
-    return sum / N
-
 def norm_data(data):
+    # normalize image data in uint8 type
+    # range is -0.5 to 0.5
+    
     norm_data = np.zeros_like(data, dtype = np.float32)
     norm_data = data/255 - 0.5
 
     return norm_data
 
-def visualize(img):
-    plt.imshow(img)
-    plt.show()
-
-    return 1
-
 def crop_border(img, shiftV, shiftH, size = (66,200)):
-    # crop the image around the remaining non-black area
+    # crop the image inside the remaining non-black area
     # after vertical and horizontal translation
+    
     rows, cols, _ = img.shape
 
     # find the center pixel of the input image
     center = (rows/2, cols/2)
 
     # find the corners of the smaller image
+    # within the valid remaining area
     y0 = np.int(center[0] - size[0]/2)
     y1 = np.int(center[0] + size[0]/2)
     x0 = np.int(center[1] - size[1]/2)
@@ -106,36 +93,54 @@ def crop_hood_sky(img, hood, sky):
   
     return img
 
-def vertical_shift(img,maxY = 30):
+def vertical_shift(img, maxY = 30):
     # return the image, randomly shifted up to max pixels
     # return shift as feedback indicating the magnitude
+    
     rows, cols, _ = img.shape
+    
+    # 31 possible steps to shift, scaled by maxY
     shift = np.int(maxY/15)*np.int(np.random.uniform(-15, 15, 1))
+    
+    # affine warp matrix M
     M = np.float32([[1, 0, 0],[0, 1, shift]])
     img = cv2.warpAffine(img, M, (cols, rows))
 
     return img, shift
 
-def horizontal_shift(img,maxX = 40):
+def horizontal_shift(img, maxX = 40):
     # return the image, randomly shifted up to max pixels
     # return shift as feedback indicating the magnitude
+    
     rows, cols, _ = img.shape
+    
+    # 31 possible steps to shift, scaled by maxX
     shift = np.int(maxX/15)*np.int(np.random.uniform(-15, 15, 1))
+    
+    # affine warp matrix M
     M = np.float32([[1, 0, shift],[0, 1, 0]])
     img = cv2.warpAffine(img, M, (cols, rows))
 
     return img, shift
 
-def brightness_shift(img,maxB = 1.25):
-    # return the image, randomly shifted scaled in brightness
+def brightness_shift(img, maxB = 1.25):
+    # return the image, randomly scaled in brightness
+    
+    # maxB < 1 not properly defined for the below shift
+    # variable implementation
     maxB = max(maxB, 1)
     shift = np.random.uniform(2-maxB, maxB, 1)
+    
+    # only shift the third plane (V in HSV space)
     img[:,:,2] = img[:,:,2]*shift
 
     return img, shift
 
 def resize(img, width = 120, height = 120):
+    # resize the image
+    
     img = cv2.resize(img,(width, height), interpolation = cv2.INTER_CUBIC)
+    
     return img
 
 def get_data_arrays(array):

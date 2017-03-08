@@ -21,7 +21,7 @@ The main way that my implementation is unique from those blogposts above, is tha
 
 ![augmentation.png should go here, whoops!](augmentation.png)
 
-*Multiple results of randomized data augmentation for a single image*
+**_Multiple results of randomized data augmentation for a single image_**
 
 Early on my models were not able to navigate sharp corners with non-grassy backgrounds (water or dirt).  I realized that I had cropped off too much of the top of the image, and the model was having trouble distinguishing those areas from the road.  I updated my pre-processing to leave more of the horizon visible.  This final level of cropping is represented above.
 
@@ -60,7 +60,7 @@ Trainable params: 252,219
 
 ![CNN_architecture.png should go here, whoops!](CNN_architecture.png)
 
-*Graphical representation of the architecture*
+**_Graphical representation of the architecture_**
 
 ## Training ##
 

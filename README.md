@@ -2,7 +2,7 @@
 
 ## Introduction ##
 
-For this project I decided to maintain two Python scripts: model.py with all of the CNN model functionality, and custom_functions.py, which contains many functions utilized in the model.py.  This makes model.py much simpler to read and navigate.  Please be sure to include custom_functions.py before attempting to run model.py.
+For this project I decided to maintain two Python scripts: [model.py](model.py) with all of the CNN model functionality, and [custom_functions.py](custom_functions.py), which contains many functions utilized in the model.py.  This makes model.py much simpler to read and navigate.  Please be sure to include custom_functions.py before attempting to run model.py.
 
 I used the data provided by Udacity to train my model.  I initially tried to generate my own data, with both the stable and beta versions of the simulator, but I could not control the car smoothly in either case, without the benefit of a steering wheel or joystick.
 
@@ -57,13 +57,13 @@ For the last layer I chose ‘tanh’ for my activation layer, to ensure I could
 Trainable params: 252,219
 
 ![CNN_architecture.png should go here, whoops!](CNN_architecture.png)
-Graphical representation of the arcitecture.
+Graphical representation of the architecture.
 
 ## Training ##
 
 For training, I divided the Udacity dataset into both training and validation sets, with an 80/20 split.  I didn’t explicitly make a test dataset, as the real test is whether the car is able to drive around the track in the simulator.  Testing the model on an image dataset in the Keras environment seems a pointless exercise.
 
-My original attempts at training the model, were unsuccessful, as the car seemed to drive almost perfectly straight all the time.  I suspect this is due the majority of the data having zero steering angle, and the model tending to overfit to this situation.  This is one difficulty of a mean-square error optimization when most of the output values are the same.  My first mitigation strategy for this was to shift most images with zero steering angle to the left or right, and give a nonzero command.  This is implemented via the custom functions horizontal_shift() and pre_process().  After training this model a couple of times with decreasing learning rate, I was able to get a model that cleared the first five or so turns on the track.  At the second sharp turn before a dirt patch, the car drove straight off the road again.  My next mitigation technique was to train again, but to drop 90% of the images where the steering angle is less than 0.1.  This approach allowed me to get a trained model that would navigate the entire track.
+My original attempts at training the model were unsuccessful, as the car seemed to drive almost perfectly straight all the time.  I suspect this is due the majority of the data having zero steering angle, and the model tending to overfit to this situation.  This is one difficulty of a mean-square error optimization when most of the output values are the same.  My first mitigation strategy for this was to shift most images with zero steering angle to the left or right, and give a nonzero command.  This is implemented via the custom functions `horizontal_shift()` and `pre_process()`.  After training this model a couple of times with decreasing learning rate, I was able to get a model that cleared the first five or so turns on the track.  At the second sharp turn before a dirt patch, the car drove straight off the road again.  My next mitigation technique was to train again, but to drop 90% of the images where the steering angle is less than 0.1.  This approach allowed me to get a trained model that would navigate the entire track.
 
 My final solution was able to navigate track 1 without leaving the safe surface.  The steering is bit oscillatory, owing to my having dropped most of the images with zero steering angle.  I did a fine tuning whereby I allowed more of the zero angle images into the training set, and the issue was reduced, but still visible.  I tried this same refinement again, but eventually, although the oscillations were damped out, the car tended to drive straight into the first dirt area again.  So, I settled for the oscillating solution, not because it's the best solution, but because this project was quite time consuming, and I decided it was good enough for now.  My main takeaways from this tuning and retuning were that there is a very delicate balance to this approach, when no sensor input outside of a camera is used, and that one should take great care to same model weight files into a version control system, so as not to lose a well-behaved model and not have the ability to retrieve it.
 

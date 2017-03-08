@@ -1,3 +1,5 @@
+# Project 3 - Driver Behavior Cloning
+
 ## Introduction ##
 
 For this project I decided to maintain two Python scripts: model.py with all of the CNN model functionality, and custom_functions.py, which contains many functions utilized in the model.py.  This makes model.py much simpler to read and navigate.  Please be sure to include custom_functions.py before attempting to run model.py.
